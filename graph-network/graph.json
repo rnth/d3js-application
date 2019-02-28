@@ -1,0 +1,28 @@
+{
+  "nodes":[
+		{"id": "node1", "name":"WAN", "image":"admin.svg", "connected":"true"},
+		{"id": "node2", "name":"CDN", "image":"cdn.svg", "connected":"true"},
+		{"id": "node3", "name":"Content Service", "image":"close-envelope.svg", "connected":"true"},
+		{"id": "node4", "name":"Packager", "image":"computer.svg", "connected":"true"},
+		{"id": "node5", "name":"Apache Container", "image":"envelope.svg", "connected":"true"},
+		{"id": "node6", "name":"My SQL", "image":"grid-world.svg", "connected":"true"},
+		{"id": "node7", "name":"My SQL 1", "image":"help.svg", "connected":"true"},
+		{"id": "node8", "name":"Linux EC2", "image":"icon.svg", "connected":"true"},
+		{"id": "node9", "name":"Apache Container", "image":"refresh-page-arrow-button.svg", "connected":"true"},
+		{"id": "node10", "name":"Consumer Service", "image":"technical-support.svg", "connected":"true"},
+		{"id": "node11", "name":"Service Bus", "image":"update.svg", "connected":"true"},
+		{"id": "node12", "name":"Metrics", "image":"computer.svg", "connected":"false"}
+	],
+	"links":[
+		{"source":"node1","target":"node2", "health":"WARNING"},
+		{"source":"node1","target":"node4", "health":"GOOD"},
+		{"source":"node3","target":"node4", "health":"GOOD"},
+		{"source":"node3","target":"node5", "health":"GOOD"},
+		{"source":"node3","target":"node6", "health":"ERROR"},
+		{"source":"node11","target":"node3", "health":"GOOD"},
+		{"source":"node10","target":"node7", "health":"GOOD"},
+		{"source":"node10","target":"node8", "health":"GOOD"},
+		{"source":"node10","target":"node9", "health":"GOOD"},
+		{"source":"node11","target":"node10", "health":"GOOD"}
+	]
+}
