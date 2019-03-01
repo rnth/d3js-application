@@ -125,15 +125,12 @@ function execute() {
         })
         //END
 
-        //START: Adjust link to attach to mid horiontal , vertical and easily accessible left or right or top or bottom of a node (whichever shorter)
+        //START: Adjust link to attach to mid horiontal, vertical and easily accessible left or right or top or bottom of a node (whichever shorter)
         if (event.alpha < 0.01) {
-          //optimization+customization FIXME: Any other better way (avoid using jquery)
-          //gradually when the animation cools down sufficiently (value of 0.01 , increase the opacity to approved value), after stopping all the animations
-          force.stop() //optimzation
-          $('.link').css("opacity",0.65) //customization
+          force.stop()
+          link.style("opacity", 0.65)
         } else {
-          //initially start with a low link opacity. (otherwise there would be so much link attachment movement visible)
-          $('.link').css("opacity",0.1)
+          link.style("opacity", 0.1)
           link.attrs(function(d) {
             const point=shortestLinePoint(d)
             return { 'x1': point.source.x, 'y1': point.source.y, 'x2': point.target.x, 'y2': point.target.y };
