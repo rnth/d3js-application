@@ -15,6 +15,17 @@ function execute() {
       top: 0
     };
 
+    const opacity={
+      link: {
+        max: 0.75,
+        min: 0.1
+      },
+      node: {
+        max: 0.6,
+        min: 0.1
+      }
+    }
+
     const svg = d3.select(".network-graph-container")
       .append("svg")
       .attr("width", size.svg.width)
@@ -35,9 +46,7 @@ function execute() {
     };
 
     function determineLinkIdsAccordingToOrderOfOccurrenceInNodes(graph, linkDirection) {
-      return graph.nodes
-        .filter(node => node.id === linkDirection)
-        .map(node => graph.nodes.indexOf(node))[0]
+      return graph.nodes.filter(node => node.id === linkDirection).map(node => graph.nodes.indexOf(node))[0]
     }
 
     function linkColor(linkInfo) {
@@ -48,6 +57,7 @@ function execute() {
       return nodeInfo.connected === "true" ? "#CC0066" : "#000000" ;
     }
 
+    let highlightConnection = true
     d3.json("graph.json", function(json) {
       const normalizedlinks = json.links.map(link => {
           return {
@@ -77,14 +87,17 @@ function execute() {
             .append("g")
             .attr("class", "node")
             .attr("cursor", "pointer")
+            .attr("fill-opacity", opacity.node.max)
+            .on('dblclick', highlightConnectionsForNode)
             .call(force.drag);
 
       node.append("rect")
           .attr("width", size.node.width)
           .attr("height", size.node.height)
+          .attr("stroke-width", 5)
+          .style("stroke", "#000000")
           .attr("rx", 5)
           .attr("ry", 5)
-          .attr("fill-opacity", "0.6")
           .style("fill", nodeRectColor);
 
       node.append("image")
@@ -128,9 +141,10 @@ function execute() {
         //START: Adjust link to attach to mid horiontal, vertical and easily accessible left or right or top or bottom of a node (whichever shorter)
         if (event.alpha < 0.01) {
           force.stop()
-          link.style("opacity", 0.65)
+          link.style("opacity", opacity.link.max)
+          //TODO: draw arrows at end of lines
         } else {
-          link.style("opacity", 0.1)
+          link.style("opacity", opacity.link.min)
           link.attrs(function(d) {
             const point=shortestLinePoint(d)
             return { 'x1': point.source.x, 'y1': point.source.y, 'x2': point.target.x, 'y2': point.target.y };
@@ -176,6 +190,26 @@ function execute() {
               return { source, target, distance }
             })
           }), point => point.distance)
+      }
+
+      function highlightConnectionsForNode(data, index) {
+        if (highlightConnection) {
+          const neighboursNodesIncludingSource = _(json.links)
+            .filter(link => link.source == data.id || link.target == data.id)
+            .flatMap(item => [item.source, item.target])
+            .uniq()
+            .value()
+          sourceNode = d3.select(this).node().__data__
+          //signal that highlighting is on
+          //we will use it to prevent 
+          node.style("opacity", n => neighboursNodesIncludingSource.indexOf(n.id) > -1 ? opacity.node.max : opacity.node.min)
+          link.style("opacity", l => sourceNode.index == l.source.index || sourceNode.index == l.target.index ? opacity.link.max : opacity.link.min)
+          highlightConnection = false
+        } else {
+          node.style("opacity", opacity.node.max)
+          link.style("opacity", opacity.link.max)
+          highlightConnection = true
+        }
       }
     });
 }
