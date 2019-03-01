@@ -129,8 +129,8 @@ function execute() {
         if (event.alpha < 0.01) {
           //optimization+customization FIXME: Any other better way (avoid using jquery)
           //gradually when the animation cools down sufficiently (value of 0.01 , increase the opacity to approved value), after stopping all the animations
-          force.stop()
-          $('.link').css("opacity",0.7)
+          force.stop() //optimzation
+          $('.link').css("opacity",0.65) //customization
         } else {
           //initially start with a low link opacity. (otherwise there would be so much link attachment movement visible)
           $('.link').css("opacity",0.1)
@@ -145,7 +145,7 @@ function execute() {
       });
 
       function shortestLinePoint(d) {
-        const allpoints = {
+        const points = {
           "source": {
             'verticalLeft'    : { 'x': d.source.x,                     'y': d.source.y + size.node.height/2 },
             'horizonatTop'    : { 'x': d.source.x + size.node.width/2, 'y': d.source.y },
@@ -169,13 +169,13 @@ function execute() {
             'cornerRightDown' : { 'x': d.target.x + size.node.width,   'y': d.target.y + size.node.height }
           }
         }
-        const allPontsSource = Object.values(allpoints.source)
-        const allpointsTarget = Object.values(allpoints.target)
+        const sourcePoints = Object.values(points.source)
+        const targetPoints = Object.values(points.target)
         
         return _.minBy(
-          _.flatMap(allPontsSource, source => {
-            return _.flatMap(allpointsTarget, target => {
-              const distance = Math.sqrt(Math.abs(target.x - source.x)**2 + Math.abs(target.y - source.y)**2)
+          _.flatMap(sourcePoints, source => {
+            return _.flatMap(targetPoints, target => {
+              const distance = Math.sqrt((target.x - source.x)**2 + (target.y - source.y)**2)
               return { source, target, distance }
             })
           }), point => point.distance)
